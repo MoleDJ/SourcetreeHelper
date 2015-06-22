@@ -107,6 +107,35 @@ namespace SourceTreeHelper
 
                     break;
                 }
+                case "UpdateBasePlugin":
+                {
+                    var path = args[2];
+                    var basePluginFiles = System.IO.Directory.GetFiles(path, "MbqAppEnv.php", SearchOption.AllDirectories);
+                    if (basePluginFiles.Length > 0)
+                    {
+                        var file = basePluginFiles.FirstOrDefault(p => p.Contains(@"\mobiquo\"));
+                        if (file == null)
+                        {
+                            file = basePluginFiles.First();
+                        }
+                        var repoPath = file.Replace("MbqAppEnv.php", "");
+                        var basePluginPath = System.Configuration.ConfigurationManager.AppSettings["basePluginPath"];
+                        var bcCompare = System.Configuration.ConfigurationManager.AppSettings["bcPath"];
+                        var arguments = "\"" + basePluginPath + "\" \"" + repoPath + "\"";
+                        System.Diagnostics.Process.Start(bcCompare, arguments);
+                    }
+                    else
+                    {
+                        MessageBox.Show("This repository does not have MbqAppEnv.php file so BasePlugin not implemented.");
+                    }
+                    Application.Current.Shutdown();
+                    break;
+                }
+                default:
+                {
+                    MessageBox.Show(args[1] + " operation not supported.");
+                    break;
+                }
             }
 
         }
